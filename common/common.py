@@ -37,3 +37,6 @@ def build_image(branch_name, app_type, hub, repo, build_host,
         run('tar -xf app.tar.gz -C app')
         sudo('docker build -t %s/%s:%s-SNAPSHOT .' % (hub, repo, branch_name))
         sudo('docker push %s/%s:%s-SNAPSHOT ' % (hub, repo, branch_name))
+
+
+#def deploy_image(image, hub, hub_user, hub_pass):
