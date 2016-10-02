@@ -40,7 +40,8 @@ def build_image(branch_name, app_type, hub, repo, build_host,
 
 
 def deploy_image(branch_name, app_repo, nginx_image, hub, hub_user, hub_pass,
-                 app_type, nginx_container_name='nginx'):
+                 app_type, mongo_url, root_url, port='8080',
+                 nginx_container_name='nginx'):
     branch_name = re.sub('origin/', '', branch_name)
     branch_name = re.sub(r'\W', '-', branch_name)
     app_image = '%s/%s:%s-SNAPSHOT' % (hub, app_repo, branch_name)
@@ -51,6 +52,18 @@ def deploy_image(branch_name, app_repo, nginx_image, hub, hub_user, hub_pass,
     with settings(warn_only=True):
         sudo('docker rm -f %s' % (nginx_container_name))
         sudo('docker rm -f %s' % (app_type))
-    sudo('docker run -d --name %s %s' % (app_type, app_image))
-    sudo('docker run -d --name %s -p 80:80 --link %s %s' % (nginx_container_name,
-                                                            app_type, nginx_image))
+    sudo('docker run -d --name %s '
+         '-v /opt/%s_settings.json:/config/settings.json '
+         '-e "MONGO_URL=%s" '
+         '-e "ROOT_URL=%s" '
+         '-e "PORT=%s" '
+         '-e "METEOR_SETTINGS=$(cat /opt/%s_settings.json)" '
+         '%s' % (app_type, app_type, mongo_url, root_url, port, app_type,
+                 app_image))
+    sudo('docker run -d --name %s '
+         '-v /opt/nginx/nginx.conf:/etc/nginx/nginx.conf '
+         '-v /opt/nginx/sites-enabled:/etc/nginx/sites-enabled '
+         '-v /opt/nginx/conf.d:/etc/nginx/conf.d '
+         '-v nginx-logs:/var/log/nginx '
+         '-p 80:80 --link %s %s' % (nginx_container_name,
+                                    app_type, nginx_image))
