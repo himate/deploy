@@ -4,8 +4,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
 import common as c
 
 
-APP_TYPE = 'merchant'
-APP_REPO = 'app/merchant'
+APP_TYPE = 'customers'
+APP_REPO = 'app/customers'
 
 
 def build_image(branch_name, hub, hub_user, hub_pass, build_host, fab_root):

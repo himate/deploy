@@ -4,8 +4,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
 import common as c
 
 
-APP_TYPE = 'customer'
-APP_REPO = 'app/customer'
+APP_TYPE = 'merchants'
+APP_REPO = 'app/merchants'
 NGINX_IMAGE = 'nginx:1.11.4-alpine'
 
 
