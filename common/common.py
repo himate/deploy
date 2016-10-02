@@ -23,13 +23,13 @@ def build_branch(branch_name, app_type, release='1.3.3'):
 
 
 def build_image(branch_name, app_type, hub, repo, build_host,
-                hub_user, hub_pass):
+                hub_user, hub_pass, fab_root):
     branch_name = re.sub('origin/', '', branch_name)
     branch_name = re.sub(r'\W', '-', branch_name)
 
     with settings(host_string=build_host):
         docker_login(hub_user, hub_pass, hub)
-        put('%s/docker/Dockerfile' % (app_type), 'Dockerfile')
+        put('%s/%s/docker/Dockerfile' % (fab_root, app_type), 'Dockerfile')
         put('%s/%s.tar.gz' % (BUILD_DIR, app_type), 'app.tar.gz')
         with settings(warn_only=True):
             run('rm -rf app')
@@ -39,4 +39,8 @@ def build_image(branch_name, app_type, hub, repo, build_host,
         sudo('docker push %s/%s:%s-SNAPSHOT ' % (hub, repo, branch_name))
 
 
-#def deploy_image(image, hub, hub_user, hub_pass):
+def deploy_image(app_image, nginx_image, hub, hub_user, hub_pass):
+    docker_login(hub_user, hub_pass, hub)
+    sudo('docker pull %s' % (app_image))
+    sudo('docker pull %s' % (nginx_image))
+
