@@ -39,8 +39,18 @@ def build_image(branch_name, app_type, hub, repo, build_host,
         sudo('docker push %s/%s:%s-SNAPSHOT ' % (hub, repo, branch_name))
 
 
-def deploy_image(app_image, nginx_image, hub, hub_user, hub_pass):
+def deploy_image(branch_name, app_repo, nginx_image, hub, hub_user, hub_pass,
+                 app_type, nginx_container_name='nginx'):
+    branch_name = re.sub('origin/', '', branch_name)
+    branch_name = re.sub(r'\W', '-', branch_name)
+    app_image = '%s/%s:%s-SNAPSHOT' % (hub, app_repo, branch_name)
+
     docker_login(hub_user, hub_pass, hub)
     sudo('docker pull %s' % (app_image))
     sudo('docker pull %s' % (nginx_image))
-
+    with settings(warn_only=True):
+        sudo('docker rm -f %s' % (nginx_container_name))
+        sudo('docker rm -f %s' % (app_type))
+    sudo('docker run -d --name %s -p %s' % (app_type, app_image))
+    sudo('docker run -d --name %s -p 80:80 --link %s %s' % (nginx_container_name,
+                                                            app_type, nginx_image))
