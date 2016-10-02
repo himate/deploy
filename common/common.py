@@ -51,6 +51,6 @@ def deploy_image(branch_name, app_repo, nginx_image, hub, hub_user, hub_pass,
     with settings(warn_only=True):
         sudo('docker rm -f %s' % (nginx_container_name))
         sudo('docker rm -f %s' % (app_type))
-    sudo('docker run -d --name %s -p %s' % (app_type, app_image))
+    sudo('docker run -d --name %s %s' % (app_type, app_image))
     sudo('docker run -d --name %s -p 80:80 --link %s %s' % (nginx_container_name,
                                                             app_type, nginx_image))
