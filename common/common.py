@@ -17,7 +17,7 @@ def docker_logout(domain):
     sudo('docker logout %s' % (domain))
 
 
-def build_branch(branch_name, app_type, release='1.2.6'):
+def build_branch(branch_name, app_type, release='1.2.1'):
     with lcd('apps/%s' % (app_type)), shell_env(PACKAGE_DIRS='../../packages'):
         local('meteor --release %s build ../../%s' % (release, BUILD_DIR))
 
