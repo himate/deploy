@@ -64,6 +64,7 @@ def deploy_image(branch_name, app_repo, nginx_image, hub, hub_user, hub_pass,
          '-v /opt/nginx/nginx.conf:/etc/nginx/nginx.conf '
          '-v /opt/nginx/sites-enabled:/etc/nginx/sites-enabled '
          '-v /opt/nginx/conf.d:/etc/nginx/conf.d '
+         '-v /etc/letsencrypt:/etc/letsencrypt '
          '-v nginx-logs:/var/log/nginx '
          '-p 80:80 --link %s %s' % (nginx_container_name,
                                     app_type, nginx_image))
